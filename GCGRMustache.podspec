@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name     = 'GCGRMustache'
   s.version  = '1.6.1-gc.1'
-  s.license  = 'MIT'
+  s.license  = { :type => 'MIT', :file => 'LICENSE' }
   s.summary  = 'Objective-C implementation of the {{ mustache }} template engine, for both MacOS Cocoa and iOS.'
   s.homepage = 'https://github.com/groue/GRMustache'
   s.author   = { 'Gwendal Roué' => 'gr@pierlis.com' }
