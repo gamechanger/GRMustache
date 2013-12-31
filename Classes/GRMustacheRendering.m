@@ -36,19 +36,11 @@ static inline void appendRenderingElementsWithContext(NSMutableString *buffer, N
 
 @implementation GRMustacheSection(PrivateRendering)
 
-//#define DEBUG 1
 
 - (NSString *)renderContext:(GRMustacheContext *)context {
     NSMutableString *result = nil;
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-#ifdef DEBUG
-    DBG(@"rendering section %@ inverted %d", name, inverted);
-    DBG(@"context object is %@", [context object]);
-#endif
 	id value = [context valueForKey:name];
-#ifdef DEBUG
-    DBG(@"value is %@", value);
-#endif
 	switch([GRMustacheTemplate objectKind:value]) {
 		case GRMustacheObjectKindFalseValue:
 			if (inverted) {
@@ -99,9 +91,6 @@ static inline void appendRenderingElementsWithContext(NSMutableString *buffer, N
                     result = [helperResult retain];
                 }
             }
-#ifdef DEBUG
-            DBG(@"result is %@", result);
-#endif
         }
             //            result = [[(id<GRMustacheHelper>)value renderObject:context withSection:self] retain];
 			break;
