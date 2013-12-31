@@ -28,6 +28,7 @@
 }
 + (id)contextWithObject:(id)object __attribute__((deprecated));
 + (id)contextWithObjects:(id)object, ... __attribute__((deprecated));
++ (void)setGlobalHelperDictionary: (NSDictionary*) dict fromObject: (id) theObject;
 - (GRMustacheContext *)contextByAddingObject:(id)object __attribute__((deprecated));
 - (id)valueForKey:(NSString *)key;
 @end

@@ -29,6 +29,7 @@ typedef enum {
 	GRMustacheObjectKindFalseValue,
 	GRMustacheObjectKindEnumerable,
 	GRMustacheObjectKindLambda,
+    GRMustacheObjectKindSelectorHelper,
 } GRMustacheObjectKind;
 
 @class GRMustacheContext;

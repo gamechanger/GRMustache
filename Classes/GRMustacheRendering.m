@@ -36,10 +36,19 @@ static inline void appendRenderingElementsWithContext(NSMutableString *buffer, N
 
 @implementation GRMustacheSection(PrivateRendering)
 
+//#define DEBUG 1
+
 - (NSString *)renderContext:(GRMustacheContext *)context {
     NSMutableString *result = nil;
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
+#ifdef DEBUG
+    DBG(@"rendering section %@ inverted %d", name, inverted);
+    DBG(@"context object is %@", [context object]);
+#endif
 	id value = [context valueForKey:name];
+#ifdef DEBUG
+    DBG(@"value is %@", value);
+#endif
 	switch([GRMustacheTemplate objectKind:value]) {
 		case GRMustacheObjectKindFalseValue:
 			if (inverted) {
@@ -74,12 +83,28 @@ static inline void appendRenderingElementsWithContext(NSMutableString *buffer, N
 			}
 			break;
 
-		case GRMustacheObjectKindLambda:
-			if (!inverted) {
-                result = [[(id<GRMustacheHelper>)value renderObject:context withSection:self] retain];
+		case GRMustacheObjectKindLambda: {
+            id helperResult = [(id<GRMustacheHelper>)value renderObject:context withSection:self];
+            if ([GRMustacheTemplate objectIsFalseValue: helperResult]) {
+                if (inverted) {
+                    result = [[NSMutableString string] retain];
+                    appendRenderingElementsWithContext(result, elems, context);
+                } else {
+                    result = nil;
+                }
+            } else {
+                if (inverted) {
+                    result = nil;
+                } else {
+                    result = [helperResult retain];
+                }
             }
+#ifdef DEBUG
+            DBG(@"result is %@", result);
+#endif
+        }
+            //            result = [[(id<GRMustacheHelper>)value renderObject:context withSection:self] retain];
 			break;
-			
 		default:
 			// should not be here
 			NSAssert(NO, nil);
@@ -121,12 +146,11 @@ static inline void appendRenderingElementsWithContext(NSMutableString *buffer, N
 		return GRMustacheObjectKindEnumerable;
 	}
 	
-	// TODO: why can't we test for protocol on iOS?
-	// if ([object conformsToProtocol:@protocol(GRMustacheHelper)]) -> tests fails on iOS
+
 	if ([object respondsToSelector:@selector(renderObject:withSection:)]) {
 		return GRMustacheObjectKindLambda;
 	}
-	
+    
 	return GRMustacheObjectKindTrueValue;
 }
 
@@ -162,6 +186,9 @@ static inline void appendRenderingElementsWithContext(NSMutableString *buffer, N
 
 - (NSString *)renderContext:(GRMustacheContext *)context {
 	id value = [context valueForKey:name];
+    if ([value isKindOfClass: [GRMustacheSelectorHelper class]]) {
+        value = [value renderObject: context withSection: nil];
+    }
 	if ([GRMustacheTemplate objectIsFalseValue:value]) {
 		return @"";
 	}

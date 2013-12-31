@@ -227,7 +227,7 @@ static NSInteger BOOLPropertyType = NSNotFound;
 	NSMutableDictionary *propertyNames = [classes objectForKey:class];
 	if (propertyNames == nil) {
 		propertyNames = [NSMutableDictionary dictionaryWithCapacity:4];
-		[classes setObject:propertyNames forKey:class];
+		[classes setObject:propertyNames forKey: (id <NSCopying>) class];
 	}
 	
 	NSNumber *boolNumber = [propertyNames objectForKey:propertyName];
@@ -373,9 +373,28 @@ static NSInteger BOOLPropertyType = NSNotFound;
 	[super dealloc];
 }
 
+id m__helperObject = nil;
+NSDictionary* m__helperSelectors = nil;
+
++ (void)setGlobalHelperDictionary: (NSDictionary*) dict fromObject: (id) theObject {
+    [dict retain];
+    [m__helperSelectors release];
+    m__helperSelectors = dict;
+    [theObject retain];
+    [m__helperObject release];
+    m__helperObject = theObject;
+}
+
 - (id)valueForKeyComponent:(NSString *)key {
 	// value by selector
-	
+    NSString* globalSelectorString = [m__helperSelectors objectForKey: key];
+    if (globalSelectorString) {
+        SEL renderingSelector = NSSelectorFromString(globalSelectorString);
+        if ([m__helperObject respondsToSelector: renderingSelector]) {
+            return [GRMustacheSelectorHelper helperWithObject: m__helperObject selector: renderingSelector];
+        }
+    }
+    
 	SEL renderingSelector = NSSelectorFromString([NSString stringWithFormat:@"%@Section:withContext:", key]);
 	if ([object respondsToSelector:renderingSelector]) {
 		return [GRMustacheSelectorHelper helperWithObject:object selector:renderingSelector];

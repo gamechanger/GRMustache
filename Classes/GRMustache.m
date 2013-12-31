@@ -23,16 +23,8 @@
 #import "GRMustache.h"
 
 
-static BOOL strictBooleanMode = NO;
+//static BOOL strictBooleanMode = NO;
 
 @implementation GRMustache
-
-+ (BOOL)strictBooleanMode {
-	return strictBooleanMode;
-}
-
-+ (void)setStrictBooleanMode:(BOOL)aBool {
-	strictBooleanMode = aBool;
-}
 
 @end
