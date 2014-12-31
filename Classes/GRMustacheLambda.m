@@ -49,7 +49,8 @@
 }
 
 - (NSString *)renderObject:(id)context withSection:(GRMustacheSection *)section {
-	NSString *result = objc_msgSend(object, renderingSelector, section, context);
+    NSString * (*action)(id, SEL, GRMustacheSection *, id) = (NSString *(*)(id, SEL, GRMustacheSection *, id)) objc_msgSend;
+    NSString *result = action(object, renderingSelector, section, context);
 	if (result == nil) {
 		return @"";
 	}
