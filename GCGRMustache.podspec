@@ -10,4 +10,5 @@ Pod::Spec.new do |s|
   s.private_header_files = 'Classes/*_private.h'
   s.framework = 'Foundation'
   s.requires_arc = false
+  s.platform = :ios
 end
